@@ -1,51 +1,48 @@
-# import turtle
-#
-# # Create a screen object
-# screen = turtle.Screen()
-# timmy = turtle.Turtle()# from this we see how to create an object from blueprint
-# timmy.shape("turtle")#from this we know how to call methods
-# timmy.color("red")
-# timmy.forward(200)
-# print(screen.canvheight)#from this we see how to access attributes from objects
-# screen.exitonclick()
-#
 
-from prettytable import PrettyTable
-table=PrettyTable() #ceating table
-print(table) # without data
-table.add_column("pokemon name",["pikachu","squirtle","charmander"])
-table.add_column("Type",["electric","water","fire"])
-print(table)#with data inside by adding column
-table.align="l"
-print(table)
+#quiz game true or false
+from data import question_data
 
-#coffe machine using oop
+class Question:
+    def __init__(self, question, answer):
+        self.text = question
+        self.answer = answer
+question_bank=[]
+for question in question_data:
+    question_text = question["text"]
+    question_answer= question["answer"]
+    new_question = Question(question_text, question_answer)
+    question_bank.append(new_question)
+class QuizBrain:
+    def __init__(self,question_list):
+        self.question_number =0
+        self.score=0
+        self.question_list =question_list
 
 
-# TODO: 3. PROCESS COINS
-# TODO: 4. CHEEK TRANSACTION SSUCCESSFUL
-# TODO: 5. MAKE COFFE
-from menu import Menu, MenuItem
-from coffee_maker import CoffeeMaker
-from money_machine import MoneyMachine
-#TODO: 1. print report
-money_machine=MoneyMachine()
-coffee_maker=CoffeeMaker()
-menu=Menu()
-is_on = True
+    def next_question(self):
+            current_question = self.question_list[self.question_number]
+            self.question_number+=1
+            user_answer=input(f"Q.{self.question_number}: {current_question.text} (True/False)").lower()
+            self.cheek_answer(user_answer,current_question.answer)
+    def still_has_questions(self):
+        return self.question_number<len(self.question_list)
 
-# TODO: 2. CHEEK RESOURCE SUFFICENT?
-while is_on:
-    options=menu.get_items()
-    choice=input(f"what would you like? {options}")
-    if choice=="off":
-        is_on=False
-    elif choice=="report":
-        coffee_maker.report()
-        money_machine.report()
-    else:
-        drink=menu.find_drink(choice)
-        if coffee_maker.is_resource_sufficient(drink):
-           if money_machine.make_payment(drink.cost):
-               coffee_maker.make_coffee(drink)
+    def cheek_answer(self,user_answer,correct_answer):
+        if user_answer==correct_answer.lower():
+            print("You got it right! ")
+            self.score+=1
+        else:
+            print("that is wrong! ")
+        print(f"the correct answer is {correct_answer}")
+        print(f"Your current score is:{self.score}/{self.question_number}")
+        print("\n")
+
+quiz=QuizBrain(question_bank)
+while quiz.still_has_questions():
+    quiz.next_question()
+print("YOu've completed the quiz")
+print(f"Your final score is:{quiz.score}/{quiz.question_number}")
+
+
+
 
